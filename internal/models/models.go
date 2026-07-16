@@ -8,13 +8,13 @@ const (
 )
 
 type Issue struct {
-	ID string
-	Severity Severity
+	ID         string
+	Severity   Severity
 	Constraint string
-	Title string
+	Title      string
 }
 
 type Report struct {
-	Score int
+	Score  int
 	Issues []Issue
 }
