@@ -6,7 +6,7 @@ import (
 	"github.com/ynde83/container-health/internal/models"
 )
 
-func (d *DockerClient) InspectContainer(
+func (d *Client) InspectContainer(
 	id string,
 ) (*models.ContainerInfo, error) {
 

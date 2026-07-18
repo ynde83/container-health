@@ -6,12 +6,12 @@ import (
 	"github.com/docker/docker/client"
 )
 
-type DockerClient struct {
+type Client struct {
 	Client *client.Client
 	Ctx    context.Context
 }
 
-func New() (*DockerClient, error) {
+func New() (*Client, error) {
 	cli, err := client.NewClientWithOpts(
 		client.FromEnv,
 		client.WithAPIVersionNegotiation(),
@@ -21,12 +21,12 @@ func New() (*DockerClient, error) {
 		return nil, err
 	}
 
-	return &DockerClient{
+	return &Client{
 		Client: cli,
 		Ctx:    context.Background(),
 	}, nil
 }
 
-func (d *DockerClient) Close() error {
+func (d *Client) Close() error {
 	return d.Client.Close()
 }

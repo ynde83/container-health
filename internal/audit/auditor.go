@@ -8,7 +8,7 @@ import (
 )
 
 type Auditor struct {
-	docker *docker.DockerClient
+	docker *docker.Client
 }
 
 func New() (*Auditor, error) {

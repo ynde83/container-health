@@ -5,7 +5,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 )
 
-func (d *DockerClient) GetContainers() ([]types.Container, error) {
+func (d *Client) GetContainers() ([]types.Container, error) {
 
 	return d.Client.ContainerList(
 		d.Ctx,

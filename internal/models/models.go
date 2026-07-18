@@ -13,8 +13,3 @@ type Issue struct {
 	Constraint string
 	Title      string
 }
-
-type Report struct {
-	Score  int
-	Issues []Issue
-}
