@@ -5,6 +5,8 @@ import (
 	"log"
 
 	"github.com/ynde83/container-health/internal/docker"
+	"github.com/ynde83/container-health/internal/models"
+	"github.com/ynde83/container-health/internal/rules"
 )
 
 type Auditor struct {
@@ -32,6 +34,10 @@ func (a *Auditor) Run() error {
 		return err
 	}
 
+	runner := rules.NewRunner([]rules.Rule{
+		rules.HealthcheckRule{},
+	})
+
 	fmt.Printf("Containers found: %d\n\n", len(containers))
 
 	for _, c := range containers {
@@ -42,28 +48,14 @@ func (a *Auditor) Run() error {
 			continue
 		}
 
-		fmt.Printf("Container: %s\n", info.Name)
-		fmt.Printf("Image: %s\n", info.Image)
-		fmt.Printf("State: %s\n", info.State)
+		issues := runner.Run(info)
 
-		if info.User == "" {
-			fmt.Println("User: root (default)")
-		} else {
-			fmt.Printf("User: %s\n", info.User)
+		report := models.Report{
+			Container: *info,
+			Issues:    issues,
 		}
 
-		fmt.Printf("Restart Count: %d\n", info.RestartCount)
-
-		if info.RestartPolicy == "" {
-			fmt.Println("Restart Policy: none")
-		} else {
-			fmt.Printf("Restart Policy: %s\n", info.RestartPolicy)
-		}
-
-		fmt.Printf("Privileged: %t\n", info.Privileged)
-		fmt.Printf("Healthcheck: %t\n", info.HasHealthcheck)
-
-		fmt.Println("----------------------------------------")
+		fmt.Printf("%+v\n\n", report)
 	}
 
 	return nil
