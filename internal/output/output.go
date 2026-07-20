@@ -1,0 +1,33 @@
+package output
+
+import (
+	"fmt"
+
+	"github.com/ynde83/container-health/internal/models"
+)
+
+func Print(report models.Report) {
+	fmt.Println("Container Health Report")
+	fmt.Println()
+
+	fmt.Println("Container:")
+	fmt.Printf("  ID: %s\n", report.Container.ID)
+	fmt.Printf("  Name: %s\n", report.Container.Name)
+	fmt.Printf("  Image: %s\n", report.Container.Image)
+	fmt.Printf("  State: %s\n", report.Container.State)
+	fmt.Println()
+
+	fmt.Printf("Score: %d\n", report.Score)
+	fmt.Println()
+
+	fmt.Println("Issues:")
+	if len(report.Issues) == 0 {
+		fmt.Println("  None")
+		return
+	}
+
+	for _, issue := range report.Issues {
+		fmt.Printf("  - [%s] %s (%s)\n", issue.Severity, issue.Title, issue.ID)
+		fmt.Printf("    Constraint: %s\n", issue.Constraint)
+	}
+}
