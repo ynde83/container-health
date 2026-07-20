@@ -7,6 +7,7 @@ import (
 	"github.com/ynde83/container-health/internal/docker"
 	"github.com/ynde83/container-health/internal/models"
 	"github.com/ynde83/container-health/internal/rules"
+	"github.com/ynde83/container-health/internal/score"
 )
 
 type Auditor struct {
@@ -53,6 +54,7 @@ func (a *Auditor) Run() error {
 		report := models.Report{
 			Container: *info,
 			Issues:    issues,
+			Score:     score.Calculate(issues),
 		}
 
 		fmt.Printf("%+v\n\n", report)

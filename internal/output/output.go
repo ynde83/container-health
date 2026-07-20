@@ -7,10 +7,10 @@ import (
 )
 
 func Print(report models.Report) {
-	fmt.Println("Container Health Report")
+	fmt.Printf("Container: %s\n", report.Container.Name)
 	fmt.Println()
 
-	fmt.Println("Container:")
+	fmt.Println("Recommendation:")
 	fmt.Printf("  ID: %s\n", report.Container.ID)
 	fmt.Printf("  Name: %s\n", report.Container.Name)
 	fmt.Printf("  Image: %s\n", report.Container.Image)
