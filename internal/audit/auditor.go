@@ -29,15 +29,16 @@ func (a *Auditor) Close() error {
 	return a.docker.Close()
 }
 
-func (a *Auditor) Run(jsonOutput bool) error {
+func (a *Auditor) Run(jsonOutput bool) (bool, error) {
 	containers, err := a.docker.GetContainers()
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	runner := rules.NewRunner(rules.Default())
 
 	reports := make([]models.Report, 0, len(containers))
+	hasIssues := false
 
 	for _, c := range containers {
 
@@ -48,6 +49,9 @@ func (a *Auditor) Run(jsonOutput bool) error {
 		}
 
 		issues := runner.Run(info)
+		if len(issues) > 0 {
+			hasIssues = true
+		}
 
 		report := models.Report{
 			Container: *info,
@@ -59,10 +63,10 @@ func (a *Auditor) Run(jsonOutput bool) error {
 	}
 
 	if jsonOutput {
-		return output.PrintJSON(reports)
+		return hasIssues, output.PrintJSON(reports)
 	}
 
 	output.Print(reports)
 
-	return nil
+	return hasIssues, nil
 }

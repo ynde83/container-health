@@ -3,8 +3,15 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/ynde83/container-health/internal/audit"
+)
+
+const (
+	exitOK           = 0
+	exitIssuesFound  = 1
+	exitRuntimeError = 2
 )
 
 func main() {
@@ -13,12 +20,26 @@ func main() {
 
 	auditor, err := audit.New()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		os.Exit(exitRuntimeError)
 	}
 
-	defer auditor.Close()
+	hasIssues, runErr := auditor.Run(*jsonOutput)
+	closeErr := auditor.Close()
 
-	if err := auditor.Run(*jsonOutput); err != nil {
-		log.Fatal(err)
+	if runErr != nil {
+		log.Print(runErr)
+		os.Exit(exitRuntimeError)
 	}
+
+	if closeErr != nil {
+		log.Print(closeErr)
+		os.Exit(exitRuntimeError)
+	}
+
+	if hasIssues {
+		os.Exit(exitIssuesFound)
+	}
+
+	os.Exit(exitOK)
 }
