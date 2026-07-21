@@ -37,6 +37,11 @@ func (d *Client) InspectContainer(
 		privileged = inspect.HostConfig.Privileged
 	}
 
+	state := ""
+	if inspect.State != nil {
+		state = inspect.State.Status
+	}
+
 	info := &models.ContainerInfo{
 		ID: id,
 
@@ -47,7 +52,7 @@ func (d *Client) InspectContainer(
 
 		Image: image,
 
-		State: inspect.State.Status,
+		State: state,
 
 		User: user,
 
