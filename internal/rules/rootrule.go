@@ -1,11 +1,16 @@
 package rules
 
-import "github.com/ynde83/container-health/internal/models"
+import (
+	"strings"
+
+	"github.com/ynde83/container-health/internal/models"
+)
 
 type RootRule struct{}
 
 func (r RootRule) Check(container *models.ContainerInfo) *models.Issue {
-	if container.User != "" {
+	user := strings.ToLower(strings.TrimSpace(container.User))
+	if user != "" && user != "0" && user != "root" {
 		return nil
 	}
 

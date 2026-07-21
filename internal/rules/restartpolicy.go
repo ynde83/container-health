@@ -1,11 +1,16 @@
 package rules
 
-import "github.com/ynde83/container-health/internal/models"
+import (
+	"strings"
+
+	"github.com/ynde83/container-health/internal/models"
+)
 
 type RestartPolicyRule struct{}
 
 func (r RestartPolicyRule) Check(container *models.ContainerInfo) *models.Issue {
-	if container.RestartPolicy != "" {
+	restartPolicy := strings.ToLower(strings.TrimSpace(container.RestartPolicy))
+	if restartPolicy != "" && restartPolicy != "no" {
 		return nil
 	}
 

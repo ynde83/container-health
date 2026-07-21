@@ -20,9 +20,21 @@ func (d *Client) InspectContainer(
 	}
 
 	hasHealthcheck := false
+	image := ""
+	user := ""
 
 	if inspect.Config != nil {
 		hasHealthcheck = inspect.Config.Healthcheck != nil
+		image = inspect.Config.Image
+		user = inspect.Config.User
+	}
+
+	restartPolicy := ""
+	privileged := false
+
+	if inspect.HostConfig != nil {
+		restartPolicy = string(inspect.HostConfig.RestartPolicy.Name)
+		privileged = inspect.HostConfig.Privileged
 	}
 
 	info := &models.ContainerInfo{
@@ -33,19 +45,17 @@ func (d *Client) InspectContainer(
 			"/",
 		),
 
-		Image: inspect.Config.Image,
+		Image: image,
 
 		State: inspect.State.Status,
 
-		User: inspect.Config.User,
+		User: user,
 
 		RestartCount: inspect.RestartCount,
 
-		RestartPolicy: string(
-			inspect.HostConfig.RestartPolicy.Name,
-		),
+		RestartPolicy: restartPolicy,
 
-		Privileged: inspect.HostConfig.Privileged,
+		Privileged: privileged,
 
 		HasHealthcheck: hasHealthcheck,
 	}
