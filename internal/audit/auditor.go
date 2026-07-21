@@ -35,9 +35,7 @@ func (a *Auditor) Run(jsonOutput bool) error {
 		return err
 	}
 
-	runner := rules.NewRunner([]rules.Rule{
-		rules.HealthcheckRule{},
-	})
+	runner := rules.NewRunner(rules.Default())
 
 	reports := make([]models.Report, 0, len(containers))
 
