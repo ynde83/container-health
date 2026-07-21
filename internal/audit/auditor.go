@@ -1,11 +1,11 @@
 package audit
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/ynde83/container-health/internal/docker"
 	"github.com/ynde83/container-health/internal/models"
+	"github.com/ynde83/container-health/internal/output"
 	"github.com/ynde83/container-health/internal/rules"
 	"github.com/ynde83/container-health/internal/score"
 )
@@ -29,7 +29,7 @@ func (a *Auditor) Close() error {
 	return a.docker.Close()
 }
 
-func (a *Auditor) Run() error {
+func (a *Auditor) Run(jsonOutput bool) error {
 	containers, err := a.docker.GetContainers()
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (a *Auditor) Run() error {
 		rules.HealthcheckRule{},
 	})
 
-	fmt.Printf("Containers found: %d\n\n", len(containers))
+	reports := make([]models.Report, 0, len(containers))
 
 	for _, c := range containers {
 
@@ -57,8 +57,14 @@ func (a *Auditor) Run() error {
 			Score:     score.Calculate(issues),
 		}
 
-		fmt.Printf("%+v\n\n", report)
+		reports = append(reports, report)
 	}
+
+	if jsonOutput {
+		return output.PrintJSON(reports)
+	}
+
+	output.Print(reports)
 
 	return nil
 }

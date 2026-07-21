@@ -1,12 +1,29 @@
 package output
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/ynde83/container-health/internal/models"
 )
 
-func Print(report models.Report) {
+func Print(reports []models.Report) {
+	fmt.Printf("Containers found: %d\n\n", len(reports))
+
+	for _, report := range reports {
+		printReport(report)
+		fmt.Println()
+	}
+}
+
+func PrintJSON(reports []models.Report) error {
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(reports)
+}
+
+func printReport(report models.Report) {
 	fmt.Printf("Container: %s\n", report.Container.Name)
 	fmt.Println()
 
